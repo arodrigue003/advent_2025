@@ -12,5 +12,4 @@ pub mod day11;
 pub mod day12;
 
 pub mod common;
-mod dayxx;
 pub mod models;
