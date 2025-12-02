@@ -1,9 +1,9 @@
 use nom::bytes::tag;
 use nom::character::complete::{i64 as i64_parser, line_ending};
-use nom::combinator::{map};
-use nom::multi::{ separated_list1};
-use nom::{IResult, Parser};
+use nom::combinator::map;
+use nom::multi::separated_list1;
 use nom::sequence::terminated;
+use nom::{IResult, Parser};
 
 fn parse_range(input: &str) -> IResult<&str, (i64, i64)> {
     map((i64_parser, tag("-"), i64_parser), |(start, _, end)| (start, end)).parse(input)
