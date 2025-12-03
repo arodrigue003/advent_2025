@@ -11,7 +11,7 @@ use crate::models::AdventSolution;
 
 #[derive(Default)]
 pub struct Day03 {
-    parsed_data: Option<String>,
+    parsed_data: Option<Vec<String>>,
 }
 
 impl AdventSolution for Day03 {
