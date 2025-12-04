@@ -5,7 +5,7 @@ use std::time::Instant;
 use advent_2025::day01::Day01;
 use advent_2025::day02::Day02;
 use advent_2025::day03::Day03;
-// use advent_2025::day04::Day04;
+use advent_2025::day04::Day04;
 // use advent_2025::day05::Day05;
 // use advent_2025::day06::Day06;
 // use advent_2025::day07::Day07;
@@ -101,7 +101,7 @@ fn main() {
         Box::<Day01>::default(),
         Box::<Day02>::default(),
         Box::<Day03>::default(),
-        // Box::<Day04>::default(),
+        Box::<Day04>::default(),
         // Box::<Day05>::default(),
         // Box::<Day06>::default(),
         // Box::<Day07>::default(),

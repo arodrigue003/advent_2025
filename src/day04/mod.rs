@@ -6,12 +6,13 @@ mod parser;
 mod tests;
 
 use crate::day04::logic::{solve_part_one, solve_part_two};
+use crate::day04::models::Warehouse;
 use crate::day04::parser::parse_input;
 use crate::models::AdventSolution;
 
 #[derive(Default)]
 pub struct Day04 {
-    parsed_data: Option<String>,
+    parsed_data: Option<Warehouse>,
 }
 
 impl AdventSolution for Day04 {
@@ -24,6 +25,6 @@ impl AdventSolution for Day04 {
     }
 
     fn solve_part_two(&self) -> i128 {
-        solve_part_two(self.parsed_data.as_ref().unwrap()) as i128
+        solve_part_two(self.parsed_data.as_ref().unwrap().clone()) as i128
     }
 }
