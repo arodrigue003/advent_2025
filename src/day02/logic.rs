@@ -6,18 +6,15 @@ pub fn prepare(data: &[(i64, i64)]) -> (i64, i64) {
 
     // For every range
     for (start, end) in data {
-
         // Compute the number of digit in the start end the end of the sequence
         let start_length = start.ilog10() + 1;
         let end_length = end.ilog10() + 1;
 
         // Sequence length range from 1 to end_length / 2 because we need at least one repetition
         for seq_length in 1..=end_length / 2 {
-
             // The number of repetition depends on the size of the sequence and the size of the
             // range start and end.
             for total_repetition in 2.max(start_length / seq_length)..=end_length / seq_length {
-
                 // If the start length is compatible with the test number we are building,
                 // we can optimize our starting position by directly using the first seq_length
                 // digit of start.

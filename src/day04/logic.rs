@@ -1,4 +1,4 @@
-use crate::day04::models::{Warehouse};
+use crate::day04::models::Warehouse;
 
 pub fn solve_part_one(warehouse: &Warehouse) -> usize {
     warehouse.get_removable_rolls().len()
