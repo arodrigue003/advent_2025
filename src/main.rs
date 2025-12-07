@@ -8,7 +8,7 @@ use advent_2025::day03::Day03;
 use advent_2025::day04::Day04;
 use advent_2025::day05::Day05;
 use advent_2025::day06::Day06;
-// use advent_2025::day07::Day07;
+use advent_2025::day07::Day07;
 // use advent_2025::day08::Day08;
 // use advent_2025::day09::Day09;
 // use advent_2025::day10::Day10;
@@ -104,7 +104,7 @@ fn main() {
         Box::<Day04>::default(),
         Box::<Day05>::default(),
         Box::<Day06>::default(),
-        // Box::<Day07>::default(),
+        Box::<Day07>::default(),
         // Box::<Day08>::default(),
         // Box::<Day09>::default(),
         // Box::<Day10>::default(),
@@ -152,7 +152,7 @@ fn main() {
                     Cell::new(day_time),
                 ]);
             }
-            println!("Advent of code 2023 solutions (every time is displayed in microseconds):");
+            println!("Advent of code 2025 solutions (every time is displayed in microseconds):");
             println!("{table}");
             println!("Total execution time (excluding file loading time): {total_time} microseconds");
         }
