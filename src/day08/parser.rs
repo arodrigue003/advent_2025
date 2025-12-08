@@ -3,6 +3,7 @@ use nom::character::complete::{i64 as i64_parser, line_ending};
 use nom::combinator::map;
 use nom::multi::many1;
 use nom::{IResult, Parser};
+
 use crate::day08::models::Coordinate;
 
 fn parse_coordinate(input: &str) -> IResult<&str, Coordinate> {

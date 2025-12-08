@@ -1,7 +1,11 @@
-use crate::day08::models::Coordinate;
 use std::mem;
 
-pub fn solve_part_one(coordinates: &[Coordinate]) -> usize {
+use crate::day08::models::Coordinate;
+
+pub fn prepare(coordinates: &[Coordinate]) -> (usize, i64) {
+    let mut part_1_solution = None;
+    let mut part_2_solution = None;
+
     // Determinate the iteration count depending on the size of the input
     let target_connections = if coordinates.len() < 100 { 10 } else { 1000 };
 
@@ -26,17 +30,9 @@ pub fn solve_part_one(coordinates: &[Coordinate]) -> usize {
     let mut groups: Vec<Vec<usize>> = vec![];
 
     // Perform the operations
-    for i in 0..target_connections {
-        // Get the connection endpoints
-        let (_, (a, b)) = distances[i];
-
+    for (i, (_, (a, b))) in distances.into_iter().enumerate() {
         let group_a = coordinates_group[a];
         let group_b = coordinates_group[b];
-
-        // Check if they are in the same group. In this case we have nothing to do
-        if group_a != usize::MAX && group_b != usize::MAX && group_a == group_b {
-            continue;
-        }
 
         // The action to perform depends on if the coordinates are already in a group or not
         match (group_a, group_b) {
@@ -50,18 +46,43 @@ pub fn solve_part_one(coordinates: &[Coordinate]) -> usize {
             }
             (_, usize::MAX) => {
                 // We put 'b' in the 'a' group
+
+                // If we are about to close the circuit, we found part 2 solution
+                let group_a_len = groups[group_a].len();
+                if group_a_len + 1 == coordinates.len() {
+                    part_2_solution = Some(coordinates[a].0 * coordinates[b].0);
+                    break;
+                }
+
                 groups[group_a].push(b);
                 coordinates_group[b] = group_a;
             }
             (usize::MAX, _) => {
                 // We put 'a' in the 'b' group
+
+                // If we are about to close the circuit, we found part 2 solution
+                let group_b_len = groups[group_b].len();
+                if 1 + group_b_len == coordinates.len() {
+                    part_2_solution = Some(coordinates[a].0 * coordinates[b].0);
+                    break;
+                }
+
                 groups[group_b].push(a);
                 coordinates_group[a] = group_b;
+            }
+            (a, b) if a == b => {
+                // Coordinates are already in the same group, nothing to do
             }
             (_, _) => {
                 // We determinate the group with the less elements in
                 let group_a_len = groups[group_a].len();
                 let group_b_len = groups[group_b].len();
+
+                // If we are about to close the circuit, we found part 2 solution
+                if group_a_len + group_b_len == coordinates.len() {
+                    part_2_solution = Some(coordinates[a].0 * coordinates[b].0);
+                    break;
+                }
 
                 if group_a_len >= group_b_len {
                     // we put group 'b' in group 'a'
@@ -88,19 +109,18 @@ pub fn solve_part_one(coordinates: &[Coordinate]) -> usize {
                 }
             }
         }
+
+        // Part 1 solution
+        if i + 1 == target_connections {
+            let mut group_lens: Vec<_> = groups.iter().map(|group| group.len()).filter(|len| *len != 0).collect();
+            group_lens.sort();
+            part_1_solution = Some(
+                group_lens[group_lens.len() - 1] * group_lens[group_lens.len() - 2] * group_lens[group_lens.len() - 3],
+            );
+        }
     }
 
-    let mut group_lens: Vec<_> = groups
-        .into_iter()
-        .map(|group| group.len())
-        .filter(|len| *len != 0)
-        .collect();
-    group_lens.sort();
-    group_lens[group_lens.len() - 1] * group_lens[group_lens.len() - 2] * group_lens[group_lens.len() - 3]
-}
-
-pub fn solve_part_two(coordinates: &[Coordinate]) -> i64 {
-    0
+    (part_1_solution.unwrap(), part_2_solution.unwrap())
 }
 
 fn get_linear_distance(a: &Coordinate, b: &Coordinate) -> i64 {

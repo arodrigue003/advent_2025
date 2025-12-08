@@ -5,7 +5,7 @@ mod parser;
 #[cfg(test)]
 mod tests;
 
-use crate::day08::logic::{solve_part_one, solve_part_two};
+use crate::day08::logic::prepare;
 use crate::day08::models::Coordinate;
 use crate::day08::parser::parse_input;
 use crate::models::AdventSolution;
@@ -13,6 +13,7 @@ use crate::models::AdventSolution;
 #[derive(Default)]
 pub struct Day08 {
     parsed_data: Option<Vec<Coordinate>>,
+    prepared_data: Option<(usize, i64)>,
 }
 
 impl AdventSolution for Day08 {
@@ -20,11 +21,15 @@ impl AdventSolution for Day08 {
         self.parsed_data = Some(parse_input(_data));
     }
 
+    fn prepare(&mut self) {
+        self.prepared_data = Some(prepare(self.parsed_data.as_ref().unwrap()));
+    }
+
     fn solve_part_one(&self) -> i128 {
-        solve_part_one(self.parsed_data.as_ref().unwrap()) as i128
+        self.prepared_data.as_ref().unwrap().0 as i128
     }
 
     fn solve_part_two(&self) -> i128 {
-        solve_part_two(self.parsed_data.as_ref().unwrap()) as i128
+        self.prepared_data.as_ref().unwrap().1 as i128
     }
 }
