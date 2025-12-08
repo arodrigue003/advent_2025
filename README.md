@@ -22,7 +22,7 @@ Advent of code 2025 solutions (every time is displayed in microseconds):
 | 5   | Ranges and values           | nom                                                  |
 | 6   | Values and operators        | nom                                                  |
 | 7   | a map of chars with a start | Iter over the lines and detect the starting position |
-| 8   |                             |                                                      |
+| 8   | `162,817,812`               | nom                                                  |
 | 9   |                             |                                                      |
 | 10  |                             |                                                      |
 | 11  |                             |                                                      |
