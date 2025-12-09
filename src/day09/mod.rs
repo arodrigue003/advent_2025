@@ -6,12 +6,13 @@ mod parser;
 mod tests;
 
 use crate::day09::logic::{solve_part_one, solve_part_two};
+use crate::day09::models::Coordinate;
 use crate::day09::parser::parse_input;
 use crate::models::AdventSolution;
 
 #[derive(Default)]
 pub struct Day09 {
-    parsed_data: Option<String>,
+    parsed_data: Option<Vec<Coordinate>>,
 }
 
 impl AdventSolution for Day09 {
