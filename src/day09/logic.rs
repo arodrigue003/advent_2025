@@ -1,8 +1,9 @@
-use crate::day09::models::Coordinate;
-use itertools::Itertools;
-use std::cmp::Ordering;
 use std::collections::{HashMap, HashSet};
 use std::fmt::{Debug, Display, Formatter};
+
+use itertools::Itertools;
+
+use crate::day09::models::Coordinate;
 
 pub fn solve_part_one(borders: &[Coordinate]) -> i64 {
     borders
@@ -23,7 +24,7 @@ enum Direction {
     Down,
 }
 
-#[derive(Eq, Ord)]
+#[derive(Ord, PartialOrd, Eq, PartialEq)]
 enum Actions {
     Cut(i64),
     Coordinate(i64, Direction),
@@ -35,18 +36,6 @@ impl Actions {
             Actions::Cut(col) => *col,
             Actions::Coordinate(col, _) => *col,
         }
-    }
-}
-
-impl PartialEq for Actions {
-    fn eq(&self, other: &Self) -> bool {
-        self.get_col() == other.get_col()
-    }
-}
-
-impl PartialOrd for Actions {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.get_col().cmp(&other.get_col()))
     }
 }
 
@@ -150,7 +139,7 @@ pub fn solve_part_two(borders: &[Coordinate]) -> i64 {
         actions.extend(get_intersecting_cuts(current_row, &vertical_cuts));
 
         //  * Sort the actions by column
-        actions.sort();
+        actions.sort_by_cached_key(|action| action.get_col());
 
         //  * Compute the ranges
         // println!(
@@ -166,7 +155,7 @@ pub fn solve_part_two(borders: &[Coordinate]) -> i64 {
             actions = get_intersecting_cuts(current_row + 1, &vertical_cuts).collect();
 
             //  * Sort the actions by column
-            actions.sort();
+            actions.sort_by_cached_key(|action| action.get_col());
 
             //  * Compute the ranges
             // println!(
@@ -195,11 +184,6 @@ pub fn solve_part_two(borders: &[Coordinate]) -> i64 {
     // );
     ranges.push((current_row, get_ranges(&actions, current_row, &horizontal_lines)));
 
-    // for row in ranges {
-    //     println!("{:?}", &row);
-    // }
-    println!("{}", ranges.len());
-
     borders
         .iter()
         .enumerate()
@@ -219,7 +203,7 @@ fn get_intersecting_cuts(
     vertical_cuts: &[(i64, i64, i64)],
 ) -> impl Iterator<Item = Actions> + use<'_> {
     vertical_cuts.iter().filter_map(move |(col, r1, r2)| {
-        if (*r1 < current_row && current_row < *r2) {
+        if *r1 < current_row && current_row < *r2 {
             Some(Actions::Cut(*col))
         } else {
             None
@@ -249,16 +233,14 @@ fn get_ranges(actions: &[Actions], current_row: i64, horizontal_lines: &HashSet<
                             result.push((start_col, *c2));
                             will_get_out = true;
                         }
+                    } else if d1 == d2 {
+                        // We juste enter the shape along the line and exit it directly
+                        result.push((*c1, *c2));
+                        will_get_out = true;
                     } else {
-                        if d1 == d2 {
-                            // We juste enter the shape along the line and exit it directly
-                            result.push((*c1, *c2));
-                            will_get_out = true;
-                        } else {
-                            // We enter the shape and in it
-                            start_col = *c1;
-                            will_get_out = false;
-                        }
+                        // We enter the shape and in it
+                        start_col = *c1;
+                        will_get_out = false;
                     }
                 } else {
                     // The coordinates are not neighbors
@@ -283,7 +265,7 @@ fn get_ranges(actions: &[Actions], current_row: i64, horizontal_lines: &HashSet<
                 }
                 was_inside = !was_inside;
             }
-            (Actions::Coordinate(c1, d1), Actions::Cut(c2)) => {
+            (Actions::Coordinate(_c1, _d1), Actions::Cut(c2)) => {
                 // We come from a coordinate and met a cut, we need to change polarity
                 if will_get_out {
                     start_col = *c2;
@@ -293,7 +275,7 @@ fn get_ranges(actions: &[Actions], current_row: i64, horizontal_lines: &HashSet<
                     was_inside = true;
                 }
             }
-            (Actions::Cut(c1), Actions::Coordinate(c2, d2)) => {
+            (Actions::Cut(c1), Actions::Coordinate(c2, _d2)) => {
                 // We come from a cut, we will be inside whatever comes next.
                 if was_inside {
                     // We go out, update the result
@@ -335,7 +317,7 @@ fn is_rectangle_valid(p1: &Coordinate, p2: &Coordinate, ranges: &[(i64, Vec<(i64
 fn is_row_valid(min_col: i64, max_col: i64, row_ranges: &[(i64, i64)]) -> bool {
     // we juste have to check that there is a range that fully contains our rows
     for (range_start, range_end) in row_ranges {
-        if (*range_start <= min_col && max_col <= *range_end) {
+        if *range_start <= min_col && max_col <= *range_end {
             return true;
         }
     }
