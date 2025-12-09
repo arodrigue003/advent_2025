@@ -3,8 +3,6 @@ use itertools::Itertools;
 use std::cmp::Ordering;
 use std::collections::{HashMap, HashSet};
 use std::fmt::{Debug, Display, Formatter};
-use std::iter::FilterMap;
-use std::slice::Iter;
 
 pub fn solve_part_one(borders: &[Coordinate]) -> i64 {
     borders
@@ -177,7 +175,10 @@ pub fn solve_part_two(borders: &[Coordinate]) -> i64 {
             //     &actions,
             //     get_ranges(&actions, current_row + 1, &horizontal_lines)
             // );
-            ranges.push((current_row + 1, get_ranges(&actions, current_row + 1, &horizontal_lines)));
+            ranges.push((
+                current_row + 1,
+                get_ranges(&actions, current_row + 1, &horizontal_lines),
+            ));
         }
 
         //  * Prepare the next loop
@@ -199,35 +200,18 @@ pub fn solve_part_two(borders: &[Coordinate]) -> i64 {
     // }
     println!("{}", ranges.len());
 
-    // // Range results
-    // //  * Result
-    // let mut ranges: Vec<(i64, Vec<(i64, i64)>)> = vec![];
-    // //  * Partial results
-    // let mut current_row = sorted_coordinates[0].row;
-    // let mut current_row_ranges: Vec<(i64, i64)> = vec![];
-    // //  * Global iterators
-    // let mut coordinates = sorted_coordinates.iter();
-    // //  * Local iterators
-    // let mut intersecting_cuts = get_intersecting_cuts(current_row, &vertical_cuts);
-    // //  * Local values
-    // let mut is_inside = true;
-    // let mut does_come_from_coordinate = true;
-    // let mut current_col = sorted_coordinates[0].col;
-    // let mut direction = directions[sorted_coordinates[0]];
-    // let mut next_coordinate = coordinates.next();
-    // let mut next_cut = intersecting_cuts.next();
-    // loop {
-    //     match (next_coordinate, next_cut) {
-    //         (Some(coordinate), Some(cut)) => (),
-    //         (Some(coordinate), None) => (),
-    //         (None, Some(cut)) => {
-    //             // We have a new cut, we need to swap
-    //         }
-    //         (None, None) => break,
-    //     }
-    // }
-
-    0
+    borders
+        .iter()
+        .enumerate()
+        .flat_map(|(a, val_a)| {
+            borders
+                .iter()
+                .skip(a + 1)
+                .filter(|val_b| is_rectangle_valid(val_a, val_b, &ranges))
+                .map(|val_b| get_area(val_a, val_b))
+        })
+        .max()
+        .unwrap()
 }
 
 fn get_intersecting_cuts(
@@ -313,7 +297,6 @@ fn get_ranges(actions: &[Actions], current_row: i64, horizontal_lines: &HashSet<
                 // We come from a cut, we will be inside whatever comes next.
                 if was_inside {
                     // We go out, update the result
-                    // result.push((start_col, *c1));
                     start_col = *c2;
                 } else {
                     start_col = *c1;
@@ -326,4 +309,59 @@ fn get_ranges(actions: &[Actions], current_row: i64, horizontal_lines: &HashSet<
     }
 
     result
+}
+
+fn is_rectangle_valid(p1: &Coordinate, p2: &Coordinate, ranges: &[(i64, Vec<(i64, i64)>)]) -> bool {
+    // Get extreme values
+    let min_row = p1.row.min(p2.row);
+    let max_row = p1.row.max(p2.row);
+    let min_col = p1.col.min(p2.col);
+    let max_col = p1.col.max(p2.col);
+
+    // Determinate where we will need to search in the ranges
+    let min_range = get_row_pos_in_ranges(min_row, ranges);
+    let max_range = get_row_pos_in_ranges(max_row, ranges);
+
+    // For every row, determinate if it is valid
+    for (_, row_ranges) in ranges[min_range..=max_range].iter() {
+        if !is_row_valid(min_col, max_col, row_ranges) {
+            return false;
+        }
+    }
+
+    true
+}
+
+fn is_row_valid(min_col: i64, max_col: i64, row_ranges: &[(i64, i64)]) -> bool {
+    // we juste have to check that there is a range that fully contains our rows
+    for (range_start, range_end) in row_ranges {
+        if (*range_start <= min_col && max_col <= *range_end) {
+            return true;
+        }
+    }
+
+    false
+}
+
+/// Search for the position of a row in our ranges.
+/// To do that, we basically perform a custom binary search in our sorted range
+fn get_row_pos_in_ranges(row: i64, ranges: &[(i64, Vec<(i64, i64)>)]) -> usize {
+    let mut low = 0;
+    let mut high = ranges.len() - 1;
+
+    while low <= high {
+        let mid = low + (high - low) / 2;
+
+        if ranges[mid].0 == row {
+            return mid;
+        }
+
+        if ranges[mid].0 < row {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+
+    unreachable!();
 }
