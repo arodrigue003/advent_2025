@@ -150,26 +150,6 @@ pub fn solve_part_two(borders: &[Coordinate]) -> i64 {
         // );
         ranges.push((current_row, get_ranges(&actions, current_row, &horizontal_lines)));
 
-        //  * Compute the range for the interlayer if needed
-        if current_row + 1 != coordinate.row {
-            actions = get_intersecting_cuts(current_row + 1, &vertical_cuts).collect();
-
-            //  * Sort the actions by column
-            actions.sort_by_cached_key(|action| action.get_col());
-
-            //  * Compute the ranges
-            // println!(
-            //     "{}=>{:?}=>{:?}",
-            //     current_row + 1,
-            //     &actions,
-            //     get_ranges(&actions, current_row + 1, &horizontal_lines)
-            // );
-            ranges.push((
-                current_row + 1,
-                get_ranges(&actions, current_row + 1, &horizontal_lines),
-            ));
-        }
-
         //  * Prepare the next loop
         current_row = coordinate.row;
         actions = vec![Actions::Coordinate(coordinate.col, directions[coordinate])];

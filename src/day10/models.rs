@@ -17,7 +17,7 @@ impl Display for Machine {
                 write!(f, ".")?;
             }
         }
-        write!(f,"], buttons: ")?;
+        write!(f, "], buttons: ")?;
         for button in &self.buttons {
             write!(f, "(")?;
             for line in button {

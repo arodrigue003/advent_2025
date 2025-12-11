@@ -5,13 +5,15 @@ mod parser;
 #[cfg(test)]
 mod tests;
 
+use std::collections::HashMap;
+
 use crate::day11::logic::{solve_part_one, solve_part_two};
 use crate::day11::parser::parse_input;
 use crate::models::AdventSolution;
 
 #[derive(Default)]
 pub struct Day11 {
-    parsed_data: Option<String>,
+    parsed_data: Option<HashMap<String, Vec<String>>>,
 }
 
 impl AdventSolution for Day11 {

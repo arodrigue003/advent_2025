@@ -12,7 +12,7 @@ use advent_2025::day07::Day07;
 use advent_2025::day08::Day08;
 use advent_2025::day09::Day09;
 use advent_2025::day10::Day10;
-// use advent_2025::day11::Day11;
+use advent_2025::day11::Day11;
 // use advent_2025::day12::Day12;
 use advent_2025::models::AdventSolution;
 use clap::{Args, Parser, Subcommand};
@@ -108,7 +108,7 @@ fn main() {
         Box::<Day08>::default(),
         Box::<Day09>::default(),
         Box::<Day10>::default(),
-        // Box::<Day11>::default(),
+        Box::<Day11>::default(),
         // Box::<Day12>::default(),
     ];
 

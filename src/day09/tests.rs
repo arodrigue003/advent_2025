@@ -14,4 +14,3 @@ fn test_part_two() {
     test_part_two_common(Day09::default(), INPUT_EXAMPLE, 24);
     test_part_two_common(Day09::default(), INPUT_EXAMPLE_CUSTOM, 441);
 }
-

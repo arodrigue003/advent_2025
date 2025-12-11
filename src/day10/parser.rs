@@ -1,4 +1,3 @@
-use crate::day10::models::Machine;
 use nom::branch::alt;
 use nom::bytes::complete::tag;
 use nom::character::complete::{i64 as i64_parser, i8 as i8_parser, line_ending, space1};
@@ -6,6 +5,8 @@ use nom::combinator::map;
 use nom::multi::{many0, many1, separated_list1};
 use nom::sequence::delimited;
 use nom::{IResult, Parser};
+
+use crate::day10::models::Machine;
 
 fn parse_light(input: &str) -> IResult<&str, bool> {
     map(alt((tag("."), tag("#"))), |c| match c {

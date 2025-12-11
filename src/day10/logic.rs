@@ -1,3 +1,5 @@
+use itertools::Itertools;
+
 use crate::day10::models::Machine;
 
 pub fn solve_part_one(machines: &[Machine]) -> u32 {
@@ -47,5 +49,29 @@ pub fn solve_part_one(machines: &[Machine]) -> u32 {
 }
 
 pub fn solve_part_two(machines: &[Machine]) -> i64 {
+    for machine in machines.iter() {
+        // Create the array of equation for this machine
+        let mut equations: Vec<Vec<i8>> = vec![vec![]; machine.lights.len()];
+
+        for (pos, button) in machine.buttons.iter().enumerate() {
+            for target in button {
+                equations[*target as usize].push(pos as i8);
+            }
+        }
+
+        // Determinate how many equations we are missing
+        let missing_equations_count = if machine.lights.len() < machine.buttons.len() {
+            machine.buttons.len() - machine.lights.len()
+        } else {
+            0
+        };
+
+        println!("{missing_equations_count}=>{:?}", &equations);
+
+        for (pos, equation) in equations.iter().enumerate() {
+            let eq = equation.iter().map(|val| (*val as u8 + 97) as char).join(" + ");
+            println!("{} = {},", eq, machine.joltages[pos]);
+        }
+    }
     0
 }
