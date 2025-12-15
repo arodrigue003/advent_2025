@@ -3,7 +3,7 @@ use fraction::{Fraction, ToPrimitive, Zero};
 use itertools::Itertools;
 use ndarray::linalg::Dot;
 use ndarray::{concatenate, stack, Array2, Axis, Ix, Zip};
-use std::fmt::{write, Display, Formatter};
+use std::fmt::{Display, Formatter};
 use std::ops::Range;
 
 pub fn solve_part_one(machines: &[Machine]) -> u32 {
@@ -229,11 +229,18 @@ fn get_min_button_press(equations: &Array2<Fraction>, targets: &Array2<Fraction>
     let mut free_variables_2: Vec<FreeVariable> = free_variables.iter().map(|idx| FreeVariable::new(*idx)).collect();
 
     // Add constraint from the initial array
+    let mut max_sum = i64::MAX;
     for h in 0..m {
+        let mut present = true;
         for (pos, free_variable) in free_variables.iter().enumerate() {
             if equations[[h, *free_variable]] != Fraction::zero() {
                 free_variables_2[pos].new_max(targets[[h, 0]].to_i64().unwrap());
+            } else {
+                present = false;
             }
+        }
+        if present {
+            max_sum = targets[[h, 0]].to_i64().unwrap();
         }
     }
 
@@ -242,7 +249,6 @@ fn get_min_button_press(equations: &Array2<Fraction>, targets: &Array2<Fraction>
     // }
 
     // Create the generic solution matrix
-    let lines = n - 1 - free_variables.len();
     //  * Concatenate the solution column and the free variable ones
     let views: Vec<_> = std::iter::once(n - 1)
         .chain(free_variables)
@@ -260,6 +266,10 @@ fn get_min_button_press(equations: &Array2<Fraction>, targets: &Array2<Fraction>
         .multi_cartesian_product()
     {
         // println!("combo => {:?}", &combo);
+        // Check that the max_sum is not too big
+        if combo.iter().copied().sum::<i64>() - 1 > max_sum {
+            continue
+        }
 
         // Check if we have a better value
         let eq_to_minimize_value: Fraction = eq_to_minimize.iter().zip(combo.iter()).map(|(a, b)| a * *b).sum();
@@ -274,6 +284,8 @@ fn get_min_button_press(equations: &Array2<Fraction>, targets: &Array2<Fraction>
         // println!("{eq_to_minimize_value}");
 
         if eq_to_minimize_value < min_combo {
+            // println!("{min_combo}:{eq_to_minimize_value}=>{:?}", &combo);
+
             // Check that every value is positive
             //  * Create a solution vector from this value
             let row = Array2::from_shape_vec((combo.len(), 1), combo.into_iter().map(|c| Fraction::from(c)).collect())
@@ -302,67 +314,13 @@ fn get_min_button_press(equations: &Array2<Fraction>, targets: &Array2<Fraction>
 }
 
 pub fn solve_part_two(machines: &[Machine]) -> i64 {
-    // // Create test values
-    // #[rustfmt::skip]
-    // let equations = Array2::from_shape_vec(
-    //     (3, 3),
-    //     vec![
-    //         1, -1, 2,
-    //         3, 2, 1,
-    //         2, -3, -2
-    //     ]
-    //         .into_iter()
-    //         .map(|v| Fraction::from(v))
-    //         .collect(),
-    // ).unwrap();
-    //
-    // #[rustfmt::skip]
-    // let solutions = Array2::from_shape_vec(
-    //     (3, 1),
-    //     vec![
-    //         5,
-    //         10,
-    //         -10
-    //     ].into_iter().map(|v| Fraction::from(v)).collect(),
-    // )
-    // .unwrap();
-    //
-    // gauss_jordan(&equations, &solutions);
-
-    // // Create test values
-    // #[rustfmt::skip]
-    // let equations = Array2::from_shape_vec(
-    //     (3, 4),
-    //     vec![
-    //         1, 2, 1, 1,
-    //         2, 4, 2, 3,
-    //         3, 6, 2, 5
-    //     ]
-    //         .into_iter()
-    //         .map(|v| Fraction::from(v))
-    //         .collect(),
-    // ).unwrap();
-    //
-    // #[rustfmt::skip]
-    // let solutions = Array2::from_shape_vec(
-    //     (3, 1),
-    //     vec![
-    //         4,
-    //         7,
-    //         10
-    //     ].into_iter().map(|v| Fraction::from(v)).collect(),
-    // )
-    // .unwrap();
-    //
-    // println!("{}", gauss_jordan(&equations, &solutions));
-
     let mut result = 0;
 
     for (i, machine) in machines.iter().enumerate() {
         // if i != 144 {
         //     continue
         // }
-        println!("======Machine {i}======");
+        // println!("======Machine {i}======");
 
         // Create the base system of equation with ndarray
         let mut equations = Array2::<Fraction>::zeros((machine.joltages.len(), machine.buttons.len()));
