@@ -162,9 +162,12 @@ fn main() {
 
             // Display the result
             println!(
-                "Day {:0>2}, results: {:>14}, {:>14}, \
-                parse_time: {:>10} us, prep_time: {:>10} us, \
-                part_01_time: {:>10} us, part_02_time: {:>10} us",
+                "Day {:0>2}\n\
+                results: {:>14} - {:>14}\n\
+                parse_time:   {:>10} us\n\
+                prep_time:    {:>10} us\n\
+                part_01_time: {:>10} us\n\
+                part_02_time: {:>10} us",
                 solution.day,
                 solution.part_01_sol,
                 solution.part_02_sol,
