@@ -5,10 +5,10 @@ static INPUT_EXAMPLE: &str = include_str!("../../input_examples/day12");
 
 #[test]
 fn test_part_one() {
-    test_part_one_common(Day12::default(), INPUT_EXAMPLE, i128::MAX);
+    test_part_one_common(Day12::default(), INPUT_EXAMPLE, 2);
 }
 
 #[test]
 fn test_part_two() {
-    test_part_two_common(Day12::default(), INPUT_EXAMPLE, i128::MAX);
+    test_part_two_common(Day12::default(), INPUT_EXAMPLE, 0);
 }

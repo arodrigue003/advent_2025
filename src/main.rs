@@ -13,7 +13,7 @@ use advent_2025::day08::Day08;
 use advent_2025::day09::Day09;
 use advent_2025::day10::Day10;
 use advent_2025::day11::Day11;
-// use advent_2025::day12::Day12;
+use advent_2025::day12::Day12;
 use advent_2025::models::AdventSolution;
 use clap::{Args, Parser, Subcommand};
 use comfy_table::presets::UTF8_FULL;
@@ -109,7 +109,7 @@ fn main() {
         Box::<Day09>::default(),
         Box::<Day10>::default(),
         Box::<Day11>::default(),
-        // Box::<Day12>::default(),
+        Box::<Day12>::default(),
     ];
 
     let arguments = Cli::parse();

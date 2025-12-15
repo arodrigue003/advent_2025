@@ -5,13 +5,14 @@ mod parser;
 #[cfg(test)]
 mod tests;
 
+use models::{Problem, Shape};
 use crate::day12::logic::{solve_part_one, solve_part_two};
 use crate::day12::parser::parse_input;
 use crate::models::AdventSolution;
 
 #[derive(Default)]
 pub struct Day12 {
-    parsed_data: Option<String>,
+    parsed_data: Option<(Vec<Shape>, Vec<Problem>)>,
 }
 
 impl AdventSolution for Day12 {
